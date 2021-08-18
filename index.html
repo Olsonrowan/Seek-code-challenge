@@ -1,91 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/styles.css">
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/styles.css" />
 
     <title>3D Challenge</title>
-</head>
-<body>
-
-    <button id="scene1">scene1</button>
-    <button id="scene2">scene2</button>
-
+  </head>
+  <body>
+    <div class="description-box">
+      <h1 class="bigtext">Click on the object to change scene!</h1>
+    </div>
     <script src="three.js"></script>
     <script src="threex.domevents.js"></script>
 
     <script type="module" src="GLTFLoader.js"></script>
-    
+
     <script type="module">
-        import { GLTFLoader } from "./GLTFLoader.js";
+      import { GLTFLoader } from "./GLTFLoader.js";
 
-        
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.01,
-            1000
-        );
-        
+      var scene = new THREE.Scene();
+      // var scene2 = new THREE.Scene();
 
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight)
-        document.body.appendChild(renderer.domElement)
+      var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        1000
+      );
 
-        var loader = new GLTFLoader();
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
 
-        var obj;
-        var whatscene ="scene.gltf";
+      var loader = new GLTFLoader();
 
-        loader.load(whatscene, function(gltf){
+      var obj;
+      var whatscene = "scene.gltf";
+
+      loader.load(whatscene, function (gltf) {
+        obj = gltf.scene;
+        scene.add(gltf.scene);
+      });
+
+      var eyeClick = false;
+      const domEvents = new THREEx.DomEvents(camera, renderer.domElement);
+      domEvents.addEventListener(scene, "click", (event) => {
+        if (!eyeClick) {
+          eyeClick = true;
+          var model = "./scene2/scene.gltf";
+          console.log("EYE");
+
+          loader.load(model, function (gltf) {
+            scene.remove(obj);
             obj = gltf.scene;
             scene.add(gltf.scene);
-        })
-
-        var eyeClick = false
-        const domEvents = new THREEx.DomEvents(camera, renderer.domElement)
-        domEvents.addEventListener(scene, 'click', event =>{
-
-            if(!eyeClick){
-               
-                eyeClick = true
-                var whatscene = './scene2/scene.gltf'
-                console.log('EYE')
-            
-                   
-            } else {
-
-                eyeClick = false
-                var whatscene = "scene.gltf"
-                console.log('LUFFY')
-                 
-
-                 
-            }
-            
-
-        })
-
-        
-
-        var light = new THREE.HemisphereLight(0xffffff, 0x000000, 6)
-        scene.add(light);
-        camera.position.set( 0, 0, 3);
-        function animate(){
-            requestAnimationFrame(animate);
-            obj.rotation.y += 0.01
-            renderer.render(scene, camera);
-            
+          });
+        } else {
+          eyeClick = false;
+          var model = "scene.gltf";
+          console.log("LUFFY");
+          loader.load(model, function (gltf) {
+            scene.remove(obj);
+            obj = gltf.scene;
+            scene.add(gltf.scene);
+          });
         }
-        animate();
+      });
 
-       
-        
+      var light = new THREE.HemisphereLight(0xffffff, 0x000000, 2);
+      scene.add(light);
+      camera.position.set(0, 0, 2);
+      function animate() {
+        requestAnimationFrame(animate);
+        obj.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
     </script>
-    
-</body>
+  </body>
 </html>
